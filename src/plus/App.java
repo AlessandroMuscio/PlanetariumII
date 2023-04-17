@@ -67,6 +67,10 @@ public class App {
           } while (InputData.readYesOrNo("Would you like to calculate another route?"));
           break;
 
+        case 10:
+          starSystemController.detectCollisions();
+          break;
+
         case 0:
           break;
 

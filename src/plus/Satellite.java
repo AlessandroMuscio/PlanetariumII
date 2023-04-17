@@ -13,6 +13,18 @@ public class Satellite extends CelestialBody {
     maxStarDistance = starPlanetDistance + relativePosition.distance(new Position(0, 0));
   }
 
+  public Position getRelativePosition() {
+    return relativePosition;
+  }
+
+  public double getMinStarDistance() {
+    return minStarDistance;
+  }
+
+  public double getMaxStarDistance() {
+    return maxStarDistance;
+  }
+
   public String toStringRelative() {
     return String.format("{ID: %s, Name: %s, Mass: %.2f, RelativePosition: %s}", getID(), getName(), getMass(),
         relativePosition);

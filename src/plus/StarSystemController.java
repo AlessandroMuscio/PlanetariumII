@@ -223,7 +223,7 @@ public class StarSystemController extends Menu {
 
     String name = InputData.readNonEmptyString("What is the satellite name? ", true);
     double mass = InputData.readDoubleWithMinimum(String.format("What is %s mass? ", name), 0);
-    Position position = null, relativePosition;
+    Position position = null;
 
     do {
       if (position != null)
@@ -469,6 +469,23 @@ public class StarSystemController extends Menu {
           stringedRoute.substring(0, stringedRoute.length() - 3), routeLength);
 
       successfulMessage(message);
+    }
+  }
+
+  public void detectCollisions() {
+    try {
+      loadingMessage("Checking for collisions");
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+
+    System.out.println("Collisions detected: "
+        + (star.detectCollisions() ? AnsiColors.GREEN + "TRUE" : AnsiColors.RED + "FALSE") + AnsiColors.RESET);
+
+    try {
+      wait(3000);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
     }
   }
 }

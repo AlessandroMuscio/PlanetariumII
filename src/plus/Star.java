@@ -127,11 +127,84 @@ public class Star extends CelestialBody {
     return startingList;
   }
 
-  private Planet getOrbitingPlanet (Satellite satellite) {
+  private ArrayList<CelestialBody> getStarSystem() {
+    ArrayList<CelestialBody> starSystem = new ArrayList<>();
+
+    starSystem.add(this);
+    starSystem.addAll(planets);
+    for (Planet planet : planets)
+      starSystem.addAll(planet.getSatellites());
+
+    return starSystem;
+  }
+
+  private Planet getOrbitingPlanet(Satellite satellite) {
     for (Planet planet : planets) {
       if (planet.doesSatelliteOrbitsAround(satellite))
         return planet;
     }
+
     return null;
+  }
+
+  public boolean detectCollisions() {
+    ArrayList<CelestialBody> starSystem = getStarSystem();
+
+    for (int i = 0; i < starSystem.size() - 1; i++) {
+      CelestialBody current = starSystem.get(i);
+      for (int j = starSystem.size() - 1; j > 0; j--) {
+        CelestialBody toCheck = starSystem.get(j);
+
+        // Check for star vs satellites collisions
+        if (current instanceof Star) {
+          if (toCheck instanceof Planet)
+            break;
+
+          Satellite toCheckSatellite = (Satellite) toCheck;
+          Planet toCheckOrbitingPlanet = getOrbitingPlanet(toCheckSatellite);
+          if (toCheckOrbitingPlanet.getPosition().distance(getPosition()) == toCheckSatellite.getRelativePosition()
+              .distance(getPosition()))
+            return true;
+        }
+        // Check for planet collisions
+        else if (current instanceof Planet) {
+          // planet vs planet collision
+          if (toCheck instanceof Planet && current.getPosition().equals(toCheck.getPosition())) {
+            return true;
+          }
+          // planet vs satellite collision
+          else {
+            Satellite toCheckSatellite = (Satellite) toCheck;
+            double planetToStarDistance = current.getPosition().distance(getPosition());
+            if (toCheckSatellite.getMinStarDistance() <= planetToStarDistance
+                && planetToStarDistance <= toCheckSatellite.getMaxStarDistance())
+              return true;
+          }
+        }
+        // Check for satellite vs satellite collisions
+        else {
+          if (toCheck instanceof Planet)
+            break;
+
+          double currentMinStarDistance = ((Satellite) current).getMinStarDistance();
+          double currentMaxStarDistance = ((Satellite) current).getMaxStarDistance();
+          double toCheckMinStarDistance = ((Satellite) toCheck).getMinStarDistance();
+          double toCheckMaxStarDistance = ((Satellite) toCheck).getMaxStarDistance();
+
+          boolean firstCheck = currentMinStarDistance <= toCheckMinStarDistance
+              && toCheckMinStarDistance <= currentMaxStarDistance;
+          boolean secondCheck = currentMinStarDistance <= toCheckMaxStarDistance
+              && toCheckMinStarDistance <= currentMaxStarDistance;
+          boolean thirdCheck = toCheckMinStarDistance <= currentMinStarDistance
+              && currentMinStarDistance <= toCheckMaxStarDistance;
+          boolean fourthCheck = toCheckMinStarDistance <= currentMaxStarDistance
+              && currentMinStarDistance <= toCheckMaxStarDistance;
+          if (firstCheck || secondCheck || thirdCheck || fourthCheck)
+            return true;
+        }
+      }
+    }
+
+    return false;
   }
 }
