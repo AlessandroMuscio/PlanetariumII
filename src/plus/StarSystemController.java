@@ -59,9 +59,9 @@ public class StarSystemController extends Menu {
     Planet planetOne = new Planet("Pianeta1", 5, new Position(0, -3));
     Planet planetTwo = new Planet("Pianeta2", 7, new Position(3, 3));
 
-    Satellite satelliteOne = new Satellite("Luna1", 1, new Position(-1, -4), planetOne.getPosition());
-    Satellite satelliteTwo = new Satellite("Luna2", 2, new Position(2, 3), planetTwo.getPosition());
-    Satellite satelliteThree = new Satellite("Luna3", 1, new Position(4, 4), planetTwo.getPosition());
+    Satellite satelliteOne = new Satellite("Luna1", 1, new Position(-1, -4), relativePositioning, planetOne);
+    Satellite satelliteTwo = new Satellite("Luna2", 2, new Position(2, 3), relativePositioning, planetTwo);
+    Satellite satelliteThree = new Satellite("Luna3", 1, new Position(4, 4), relativePositioning, planetTwo);
 
     planetOne.addSatellite(satelliteOne);
 
@@ -243,14 +243,7 @@ public class StarSystemController extends Menu {
       position = new Position(x, y);
     } while (!isPositionFree(position));
 
-    if (relativePositioning) {
-      relativePosition = position;
-      position = position.add(planet.getPosition());
-    } else {
-      relativePosition = position.subtract(planet.getPosition());
-    }
-
-    Satellite satellite = new Satellite(name, mass, position, relativePosition);
+    Satellite satellite = new Satellite(name, mass, position, relativePositioning, planet);
 
     try {
       planet.addSatellite(satellite);

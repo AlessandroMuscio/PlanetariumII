@@ -126,4 +126,12 @@ public class Star extends CelestialBody {
 
     return startingList;
   }
+
+  private Planet getOrbitingPlanet (Satellite satellite) {
+    for (Planet planet : planets) {
+      if (planet.doesSatelliteOrbitsAround(satellite))
+        return planet;
+    }
+    return null;
+  }
 }
